@@ -19,12 +19,11 @@ function Graph() {
       {id : 10, name : 'Networking'},
     ],
     links : [
-      {source: 1, target: 8},
+      {source: 1, target: 5},
       {source: 4, target: 6},
-      {source: 8, target: 9},
-      {source: 3, target: 5},
+      {source: 8, target: 10},
+      {source: 5, target: 6},
       {source: 6, target: 10},
-      {source: 4, target: 10},
     ] 
     };
 

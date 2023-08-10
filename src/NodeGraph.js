@@ -5,7 +5,7 @@ import { select } from 'd3-selection';
 export default function NodeGraph({
   data,
   width = 1600,
-  height = 960
+  height = 800
 }) {
 
   const ref = useRef();
@@ -13,10 +13,9 @@ export default function NodeGraph({
   useEffect(()=> {
     const svg = d3.select(ref.current);
     let rectHolders = svg.selectAll("g").data(data.nodes).join("g")
-    .attr("transform", d => ("translate(" + (data.nodes.indexOf(d)*(width/12+10)) + "," + ( 70) + ")"))
+    .attr("transform", d => ("translate(" + (data.nodes.indexOf(d)*(width/4))%width + "," + (20+(Math.ceil((data.nodes.indexOf(d)+1)/4)-1)*(height/10)) + ")"))
     .on('click', (e, d) => console.log(d.name))
-    .attr('data-id', d => d.id)
-    ;
+    .attr('data-id', d => d.id);
 
     rectHolders.append("rect")
       .attr("stroke", "blue")
@@ -46,33 +45,32 @@ export default function NodeGraph({
     // .attr("fill", "none")
     // .attr("stroke", "red");
 
-    svg.selectAll(".link")
+    svg.selectAll("path")
+    .append("path")
       .data(data.links)
       .join("path")
       .attr("class", "link")
       .attr("d", d => {
-        
         let sourcegroup = rectHolders.nodes().find(c => c.__data__.id === d.source)
         let targetgoup = rectHolders.nodes().find(c => c.__data__.id === d.target)
         let sourceRect = rectangles.nodes().find( c => c.__data__.id === d.source);
         let targetRect = rectangles.nodes().find( c => c.__data__.id === d.target);
         
         let sourcex = parseFloat(sourcegroup.getAttribute("transform").match(/translate\(([^,]+),/)[1]) + parseFloat(sourceRect.getAttribute('width'))/2;
-        let sourcey = parseFloat(sourcegroup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]) + parseFloat(sourceRect.getAttribute('height'));
+        let sourcey = parseFloat(sourcegroup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]) + parseFloat(sourceRect.getAttribute('height')/2);
 
         let targetx = parseFloat(targetgoup.getAttribute("transform").match(/translate\(([^,]+),/)[1]) + parseFloat(targetRect.getAttribute('width'))/2;
-        let targety = parseFloat(targetgoup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]) + parseFloat(targetRect.getAttribute('height'));
-        
-        console.log(`SX ${sourcex} SY ${sourcey}`)
+        let targety = parseFloat(targetgoup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]);        
 
         const dx = targetx - sourcex;
         const dy = targety - sourcey;
         const dr = Math.sqrt(dx * dx + dy * dy);
 
-        return `M${sourcex},${sourcey}A${1},${.2} 0,0,0 ${targetx},${targety}`;
+        return `M${sourcex},${sourcey} ${targetx},${targety}`; //`M${sourcex},${sourcey}A${1},${.2} 0,0,0 ${targetx},${targety}`; for arcs 
       })
       .attr("fill", "none")
       .attr("stroke", "red")
+      .attr("marker-end", "url(#head)")
   }
   )
 

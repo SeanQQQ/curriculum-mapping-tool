@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Graph />
+    <Graph width={window.screen.width} />
   </React.StrictMode>
 );
 

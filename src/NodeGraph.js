@@ -1,14 +1,7 @@
-import * as d3 from "d3";
-import React, { useEffect, useRef, useState } from 'react';
-import { select } from 'd3-selection';
+//import * as d3 from "d3";
+import React, { /* useEffect, useRef, useState*/ } from 'react';
+//import { select } from 'd3-selection';
 
-export default function NodeGraph({
-  data,
-  width = 960,
-  height = 960
-}) {
-
-  
   // 2  | 1200  600 , 960 480
   // 3  | 1200  400 , 960 320
   // 4  | 1200  300 , 960 240
@@ -19,9 +12,12 @@ export default function NodeGraph({
   // 20 | 1200  60  , 960 48
   // 24 | 1200  50  , 960 40
   // 48 | 1200  25  , 960 20
-  
-  const ref = useRef();
-  
+
+export default function NodeGraph({
+  data,
+  width = 960,
+  height = 960
+}) {
   const margin = width/48;
   const rectWidth = width/6;
   const rectHeight = width/12;
@@ -37,7 +33,7 @@ export default function NodeGraph({
 
   let currSem = 0
   data.nodes.forEach(element => {
-    if(Semesters[currSem].length == 0){
+    if(Semesters[currSem].length === 0){
       Semesters[currSem].push(element);
     }else{        
       if(Semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 24){
@@ -49,18 +45,18 @@ export default function NodeGraph({
 
   Semesters.forEach( (sem, i) => {
     sem.forEach( (sub, j) => {sub.xPos = j; sub.yPos=i} )
-  } )
+  } )  
 
-  console.log(Semesters);
-  
   return (<svg
     height={height}
     width={width}
   >
-    { data.nodes.map( (subject) => (
+    { data.nodes.map( (subject, i) => (
       <g
+        key={i}
         data-id={subject.subjectId}
         transform={`translate(${(subject.xPos*(gxLocationFactor))+margin},${(subject.yPos*gyLocationFactor)+margin})`}
+        onClick={() => console.log(subject.subjectName)}
       >
         <rect
             width={rectWidth}
@@ -81,18 +77,20 @@ export default function NodeGraph({
           </text>
       </g>
     )) }
-    { data.links.map( (link) => {
-      let sourceNode = data.nodes.find(n => n.subjectId == link.source)
-      let targetNode = data.nodes.find(n => n.subjectId == link.target)
+    { data.links.map( (link, i) => {
+      let sourceNode = data.nodes.find(n => n.subjectId === link.source)
+      let targetNode = data.nodes.find(n => n.subjectId === link.target)
 
       if(sourceNode){
         return <path
+        key={i}
         d={`M ${((sourceNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${((sourceNode.yPos*(gyLocationFactor))+margin)+rectHeight} 
         L ${((targetNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${(targetNode.yPos*(gyLocationFactor))+margin}`}
         stroke={"red"}
         >
         </path>
       }
+      return "";
     } ) }
 
   </svg>)

@@ -6,14 +6,15 @@ import NodeGraph from './NodeGraph';
 function Graph() {
   const [data, setData] = useState(null);
 
-
-  useEffect(() =>{
-    fetch('https://localhost:7099/Subject').then((res) => res.json())
-    .then((d) => {
-        setData( {nodes: d.subjects, links: d.links} );
-    })
-  }, [])
-
+  useEffect(() => {
+    fetch('https://localhost:7099/Subject')
+      .then((res) => res.json())
+      .then((d) => {
+        setData({ nodes: d.subjects, links: d.links });
+      });
+    
+  }, []);
+  
   if(data){
     console.log(data);
     return (

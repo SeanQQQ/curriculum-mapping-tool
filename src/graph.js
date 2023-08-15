@@ -7,7 +7,7 @@ function Graph( {width} ) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch('https://localhost:7099/Subject')
+    fetch('https://curriculummappingapi.azurewebsites.net/Subject')
       .then((res) => res.json())
       .then((d) => {
         setData({ nodes: d.subjects, links: d.links });

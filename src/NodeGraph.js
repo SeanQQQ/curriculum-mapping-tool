@@ -23,104 +23,77 @@ export default function NodeGraph({
   const ref = useRef();
   
   const margin = width/48;
-  const rectWidth = width/8;
+  const rectWidth = width/6;
   const rectHeight = width/12;
-  
-  useEffect(()=> {
-    if(!data) {
-      return;
-    }
-    let Semesters = [
-      [],[],[],[],[],[],[],[]
-    ];
+  const gxLocationFactor = rectWidth + margin
+  const gyLocationFactor = rectHeight + margin * 2
 
-    let currSem = 0
-    data.nodes.forEach(element => {
-      if(Semesters[currSem].length == 0){
-        Semesters[currSem].push(element);
+  if(!data) {
+    return;
+  }
+  let Semesters = [
+    [],[],[],[],[],[],[],[]
+  ];
 
-      }else{        
-        if(Semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 24){
-          currSem++
-        }
-        Semesters[currSem].push(element);
+  let currSem = 0
+  data.nodes.forEach(element => {
+    if(Semesters[currSem].length == 0){
+      Semesters[currSem].push(element);
+    }else{        
+      if(Semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 24){
+        currSem++;
       }
-    });
+      Semesters[currSem].push(element);
+    }
+  });
 
-    console.log(Semesters);
+  Semesters.forEach( (sem, i) => {
+    sem.forEach( (sub, j) => {sub.xPos = j; sub.yPos=i} )
+  } )
 
-
-    
-    const svg = d3.select(ref.current);
-    
-    const g = svg.selectAll("g")
-
-    Semesters.forEach((e, i) => {
-      g.data(e).enter().append("g")
-      .attr("transform", d => ("translate(" + ((e.indexOf(d)*width/6)+margin) + "," + (i*(height/10) + margin) + ")" ))
-      .attr('data-id', d => d.subjectId);
-    })
-
-    // let rectHolders = svg.selectAll("g").data(data.nodes).join("g")
-    // .attr("transform", d => ("translate(" + (data.nodes.indexOf(d)*(width/4) + margin)%width + "," + ((Math.floor(data.nodes.indexOf(d)/4))*(height/10) + margin) + ")"))
-    // .on('click', (e, d) => console.log(d.name))
-    // .attr('data-id', d => d.subjectId);
-
-    
-    let rectHolders = svg.selectAll("g");
-
-    let rectangles = rectHolders.append("rect")
-      .attr("stroke", "blue")
-      .attr("width", rectWidth)
-      .attr("height", rectHeight)
-      .attr('data-id', d => d.subjectId)
-      .attr("fill-opacity", "0.5")
-      .attr("fill", "lightblue")
-    
-    rectHolders.append("text")
-      .text( d => d.subjectName)
-      .style("font-size", "8px")
-      .attr('x', rectWidth/2)
-      .attr('y', rectHeight/2)
-      .attr('text-anchor', "middle")      
-      .attr("font-weight", "bold");
-    
-    svg.selectAll("path")
-    .append("path")
-      .data(data.links)
-      .join("path")
-      .attr("class", "link")
-      .attr("d", d => {
-        let sourcegroup = rectHolders.nodes().find(c => c.__data__.subjectId === d.source)
-        let targetgoup = rectHolders.nodes().find(c => c.__data__.subjectId === d.target)
-        let sourceRect = rectangles.nodes().find( c => c.__data__.subjectId === d.source);
-        let targetRect = rectangles.nodes().find( c => c.__data__.subjectId === d.target);
-        
-        if(sourcegroup){
-          let sourcex = parseFloat(sourcegroup.getAttribute("transform").match(/translate\(([^,]+),/)[1]) + parseFloat(sourceRect.getAttribute('width'))/2;
-          let sourcey = parseFloat(sourcegroup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]) + parseFloat(sourceRect.getAttribute('height'));
+  console.log(Semesters);
   
-          let targetx = parseFloat(targetgoup.getAttribute("transform").match(/translate\(([^,]+),/)[1]) + parseFloat(targetRect.getAttribute('width'))/2;
-          let targety = parseFloat(targetgoup.getAttribute("transform").match(/translate\([^,]+,\s*([^)]+)\)/)[1]);
-        
-          return `M${sourcex},${sourcey} ${targetx},${targety}`;
-        }
-      })
-      .style("fill", "black")
-      .style("stroke", "red")
-      }, []
-  )
-
-  return (<svg 
-    ref={ref}
-    width={width}
+  return (<svg
     height={height}
-   />)
+    width={width}
+  >
+    { data.nodes.map( (subject) => (
+      <g
+        data-id={subject.subjectId}
+        transform={`translate(${(subject.xPos*(gxLocationFactor))+margin},${(subject.yPos*gyLocationFactor)+margin})`}
+      >
+        <rect
+            width={rectWidth}
+            height={rectHeight}
+            fill='lightblue'
+            stroke='blue'
+            strokeWidth={3}
+          ></rect>
+          <text
+            x={rectWidth/2}
+            y={rectHeight/2}
+            textAnchor="middle"
+            fontSize={width/96}
+            fontWeight={"bold"}
+            transform="rotate(-3)"
+          >
+            {subject.subjectName}
+          </text>
+      </g>
+    )) }
+    { data.links.map( (link) => {
+      let sourceNode = data.nodes.find(n => n.subjectId == link.source)
+      let targetNode = data.nodes.find(n => n.subjectId == link.target)
+
+      if(sourceNode){
+        return <path
+        d={`M ${((sourceNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${((sourceNode.yPos*(gyLocationFactor))+margin)+rectHeight} 
+        L ${((targetNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${(targetNode.yPos*(gyLocationFactor))+margin}`}
+        stroke={"red"}
+        >
+        </path>
+      }
+    } ) }
+
+  </svg>)
 }
-
-//data format:
-//data = { nodes:[], links:[] }
-
-// node = {id, name, creditPointsm}
-
-// link = {source, target}

@@ -3,7 +3,7 @@ import './index.css';
 import NodeGraph from './NodeGraph';
 
 
-function Graph() {
+function Graph( {width} ) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -14,12 +14,11 @@ function Graph() {
       });
     
   }, []);
-  
+
   if(data){
-    console.log(data);
     return (
       <div className="App">
-          <NodeGraph data={data}/>
+          <NodeGraph data={data} width={width-width/4} height={width}/>
       </div>
     );
   }else{

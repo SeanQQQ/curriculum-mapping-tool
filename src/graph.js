@@ -18,7 +18,7 @@ function Graph( {width} ) {
   if(data){
     return (
       <div className="App">
-          <NodeGraph data={data} width={width-width/4} height={width}/>
+          <NodeGraph data={data} width={width} height={width}/>
       </div>
     );
   }else{

@@ -1,45 +1,56 @@
 //import * as d3 from "d3";
 //import { isoParse } from 'd3';
-import React, { useEffect, useState } from 'react';
+//import React, { useEffect, useState } from 'react';
 //import { select } from 'd3-selection';
 
 
 
 
 function placeSubjectChains(subNode, subjects, links, placed, semesters, currSem, idealPos){
-  let children = links.filter((l) => l.source == subNode.subjectId).map(l => subjects.find(sub => sub.subjectId == l.target));
+  let children = links.filter((l) => l.source === subNode.subjectId).map(l => subjects.find(sub => sub.subjectId === l.target));
+  let parents = links.filter((l) => l.target === subNode.subjectId).map(l => subjects.find(sub => sub.subjectId === l.source));
   let semPos = 0;
   
+  let allParentsPlaced = true;
+  for(var i = 0; i<parents.length; i++){
+    if(!placed.includes(parents[i])){
+      allParentsPlaced = false;
+      break;
+    } 
+  }
   
-  let isPlaced = false;
-  while(!isPlaced){
-    if(semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + subNode.creditPoints <= 24){
-      if(!semesters[currSem][idealPos]){
-        semesters[currSem][idealPos] = subNode;
-        placed.push(subNode);
-        isPlaced = true;
-      }else{
-        while(!isPlaced){
-          if(!semesters[currSem][semPos]){
-            semesters[currSem][semPos] = subNode;
-            placed.push(subNode);
-            isPlaced = true;
-          }else{
-            semPos++;
+  if(allParentsPlaced){
+    let isPlaced = false;
+    while(!isPlaced){
+      if(semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + subNode.creditPoints <= 24){
+        if(!semesters[currSem][idealPos]){
+          semesters[currSem][idealPos] = subNode;
+          placed.push(subNode);
+          isPlaced = true;
+          semPos = idealPos
+        }else{
+          while(!isPlaced){
+            if(!semesters[currSem][semPos]){
+              semesters[currSem][semPos] = subNode;
+              placed.push(subNode);
+              isPlaced = true;
+            }else{
+              semPos++;
+            }
           }
         }
       }
+      else{
+        currSem++;
+      }
     }
-    else{
-      currSem++;
-    }
+  
+    children.forEach(linkedSub => {
+      if(!placed.includes(linkedSub)){
+        placeSubjectChains(linkedSub, subjects, links, placed, semesters, currSem+1, semPos);
+      }
+    })
   }
-
-  children.forEach(linkedSub => {
-    if(!placed.includes(linkedSub)){
-      placeSubjectChains(linkedSub, subjects, links, placed, semesters, currSem+1, semPos);
-    }
-  })
 }
 
 // 2  | 1200  600 , 960 480
@@ -57,8 +68,7 @@ export default function NodeGraph({
   width = 960,
   height = 960
 }) {  
-
-  console.log('Hello World');
+  console.log("ran");
 
   //Scaling Values
   let  margin = width/48;
@@ -67,13 +77,11 @@ export default function NodeGraph({
   const gxLocationFactor = rectWidth + margin
   const gyLocationFactor = rectHeight + margin * 2
   
-  //Adding properties to subjects 
- 
+  
   let Semesters = [
     [],[],[],[],[],[],[],[]
   ];
   
-  let currSem = 0
   let rootSubs = data.nodes.filter((sub) => sub.rootDescendenceDepth > 0);
 
   let placed = [];
@@ -81,7 +89,6 @@ export default function NodeGraph({
     placeSubjectChains(subject, data.nodes, data.links, placed, Semesters, 0, 0)
   })
 
-  debugger;
   var floatingSubjects = data.nodes.filter(sub =>  !placed.includes(sub))
 
   let semIndex = 0
@@ -96,7 +103,6 @@ export default function NodeGraph({
         }else{
           let semLength = Semesters[semIndex].length
           for(var i = 0; i <=semLength; i++){
-            console.log(Semesters[semIndex][i])
             if(!Semesters[semIndex][i]){
               Semesters[semIndex][i] = element;
               placed = true;
@@ -108,12 +114,12 @@ export default function NodeGraph({
     }
   });
   
-
-
   Semesters.forEach( (sem, i) => {
     sem.forEach( (sub, j) => {sub.xPos = j; sub.yPos=i} )
   } )  
-  
+
+
+
   return (<svg
     height={height}
     width={width}
@@ -123,7 +129,7 @@ export default function NodeGraph({
         key={i}
         data-id={subject.subjectId}
         transform={`translate(${(subject.xPos*(gxLocationFactor))+margin},${(subject.yPos*gyLocationFactor)+margin})`}
-        onClick={() => console.log(subject.subjectName + " CP: " + subject.creditPoints)}
+        onClick={() => console.log("Hello World")}
       >
         <rect
             width={rectWidth}
@@ -142,6 +148,15 @@ export default function NodeGraph({
           >
             {subject.subjectName}
           </text>
+          <text
+            x={rectWidth/2}
+            y={rectHeight/2 + margin}
+            textAnchor="middle"
+            fontSize={width/96}
+            fontWeight={"bold"}
+          >
+            {"Credit points: " + subject.creditPoints}
+          </text>
       </g>
     )) }
     { data.links.map( (link, i) => {
@@ -152,7 +167,7 @@ export default function NodeGraph({
         return <path
         key={i}
         d={`M ${((sourceNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${((sourceNode.yPos*(gyLocationFactor))+margin)+rectHeight} 
-        L ${((targetNode.xPos*(gxLocationFactor))+margin)+rectWidth/2} ${(targetNode.yPos*(gyLocationFactor))+margin}`}
+        L ${((targetNode.xPos*(gxLocationFactor))+margin)+rectWidth/2+margin*2} ${(targetNode.yPos*(gyLocationFactor))+margin}`}
         stroke={"red"}
         strokeWidth={width/512}
         >

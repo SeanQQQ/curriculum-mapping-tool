@@ -1,10 +1,7 @@
 //import * as d3 from "d3";
 //import { isoParse } from 'd3';
-//import React, { useEffect, useState } from 'react';
+//import React, { useState } from 'react';
 //import { select } from 'd3-selection';
-
-
-
 
 function placeSubjectChains(subNode, subjects, links, placed, semesters, currSem, idealPos){
   let children = links.filter((l) => l.source === subNode.subjectId).map(l => subjects.find(sub => sub.subjectId === l.target));
@@ -53,30 +50,19 @@ function placeSubjectChains(subNode, subjects, links, placed, semesters, currSem
   }
 }
 
-// 2  | 1200  600 , 960 480
-// 3  | 1200  400 , 960 320
-// 4  | 1200  300 , 960 240
-// 6  | 1200  200 , 960 160
-// 10 | 1200  120 , 960 96
-// 12 | 1200  100 , 960 80
-// 16 | 1200  75  , 960 60
-// 20 | 1200  60  , 960 48
-// 24 | 1200  50  , 960 40
-// 48 | 1200  25  , 960 20
 export default function NodeGraph({
   data,
   width = 960,
-  height = 960
+  height = 960,
+  infoBoxCallback
 }) {  
-  console.log("ran");
-
+  
   //Scaling Values
   let  margin = width/48;
   const rectWidth = width/6;
   const rectHeight = width/12;
   const gxLocationFactor = rectWidth + margin
   const gyLocationFactor = rectHeight + margin * 2
-  
   
   let Semesters = [
     [],[],[],[],[],[],[],[]
@@ -116,9 +102,7 @@ export default function NodeGraph({
   
   Semesters.forEach( (sem, i) => {
     sem.forEach( (sub, j) => {sub.xPos = j; sub.yPos=i} )
-  } )  
-
-
+  } )
 
   return (<svg
     height={height}
@@ -129,7 +113,7 @@ export default function NodeGraph({
         key={i}
         data-id={subject.subjectId}
         transform={`translate(${(subject.xPos*(gxLocationFactor))+margin},${(subject.yPos*gyLocationFactor)+margin})`}
-        onClick={() => console.log("Hello World")}
+        onClick={() => infoBoxCallback(subject)}
       >
         <rect
             width={rectWidth}

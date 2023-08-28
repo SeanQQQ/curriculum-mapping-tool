@@ -120,7 +120,6 @@ export default function NodeGraph({
     if(subCoord.yPos === yPos){
       setSubCoords(newCoords);
     }else{
-      debugger;
       if(SemCredPoints+subCoord.subject.creditPoints <= 24){
         for(let i = 0; i<=5; i++){
           if(!takenXpos.includes(i)){

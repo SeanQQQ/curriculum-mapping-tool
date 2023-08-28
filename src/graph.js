@@ -27,7 +27,7 @@ function Graph( {width, courseId} ) {
     return (
       <div className="App">
           <NodeGraph data={data} width={width/2} height={width} infoBoxCallback={setInfoBoxValues}/>
-          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2 - 100} height={width}/>
+          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2 - width/48} height={width}/>
       </div>
     );
   }else{

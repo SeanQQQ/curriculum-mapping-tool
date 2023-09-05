@@ -7,6 +7,7 @@ import InfoBox from './infoBox';
 function Graph( {width} ) {
   const [data, setData] = useState(null);
   const [courseData, setCourseData] = useState(null);
+  const [courseNote, setCourseNote] = useState(null);
   const [infoBoxVisible, setInfoBoxVisible] = useState(false);
   const [infoBoxData, setInfoBoxData] = useState(null);
   const [courseId, setCourseId] = useState(null)
@@ -19,6 +20,7 @@ function Graph( {width} ) {
   function handleSelect(e){
     let value  = e.target.value;
     setCourseId(value);
+    setCourseNote(courseData.find(c => c.courseId === value).note)
   }
 
   useEffect(() => {
@@ -26,7 +28,6 @@ function Graph( {width} ) {
       .then((res) => res.json())
       .then((d) => {
         setData({ nodes: d.subjects, links: d.links });
-        console.log(d);
       });
   }, [courseId]);
 
@@ -36,20 +37,24 @@ function Graph( {width} ) {
       .then((d) => {
         setCourseData(d.courses);
         setCourseId(d.courses[0].courseId)
-        console.log(d);
+        setCourseNote(d.courses[0].note)
+
       });
   }, []);
 
   if(data && courseData){
     return (
       <div className="App">
-        <div><select onChange={handleSelect}>
-          {courseData.map((course) => (
-            <option value={course.courseId}>{course.courseName}</option>
+        <div style={{backgroundColor:"lightblue"}}>
+          <select onChange={handleSelect}>
+          {courseData.map((course, i) => (
+            <option key={i} value={course.courseId}>{course.courseName}</option>
           ) )}
-        </select> </div><br/>
+        </select> 
+        <p style={{margin:"0px"}} >{ courseNote }</p>
+        </div>
           <NodeGraph data={data} width={width/2} height={width} infoBoxCallback={setInfoBoxValues}/>
-          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2 - width/48} height={width}/>
+          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2 - width/44} height={width}/>
       </div>
     );
   }else{

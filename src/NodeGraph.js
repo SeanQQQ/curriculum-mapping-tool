@@ -2,9 +2,6 @@ import * as d3 from "d3";
 import React, { useEffect, useState } from 'react';
 import { select } from 'd3-selection';
 
-function createSubjectCoords(){
-  
-}
 
 function placeSubjectChains(subNode, subjects, links, placed, semesters, currSem, idealPos){  
   let children = links.filter((l) => l.source === subNode.subjectId).map(l => subjects.find(sub => sub.subjectId === l.target));
@@ -77,8 +74,6 @@ export default function NodeGraph({
   height = 960,
   infoBoxCallback
 }) {
-  console.log("Running")
-
   //Scaling Values
   let  margin = width/48;
   const rectWidth = width/6;
@@ -133,8 +128,6 @@ export default function NodeGraph({
   })
 
   useEffect(() => {
-    console.log("Data Changed")
-
     let Semesters = [
       [],[],[],[],[],[],[],[]
     ];

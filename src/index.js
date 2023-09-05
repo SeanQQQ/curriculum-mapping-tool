@@ -9,7 +9,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <Graph width={window.screen.width} courseId='C09066v6_MAJ03523'/>
+    
+    <Graph width={window.screen.width}/>
   </React.StrictMode>
 );
 

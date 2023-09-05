@@ -6,9 +6,9 @@ export default function InfoBox({
 }) {  
     
     if(isVisible){
-        return(<iframe title="Subject Information" width={width} height={height} src={"https://handbook.uts.edu.au/subjects/"+ data.subjectId +".html"}  ></iframe>)
+        return(<iframe style={{float:"left"}} title="Subject Information" width={width-width/58} height={height} src={"https://handbook.uts.edu.au/subjects/"+ data.subjectId +".html"}  ></iframe>)
     }else{
-        return (<div></div>)
+        return (<div style={{padding:5,float:"left"}}><p style={{margin:"0px"}}><b>Click on a subject to show details</b></p></div>)
     }
   }
   

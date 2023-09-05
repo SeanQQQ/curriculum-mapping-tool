@@ -54,7 +54,7 @@ function Graph( {width} ) {
         <p style={{margin:"0px"}} >{ courseNote }</p>
         </div>
           <NodeGraph data={data} width={width/2} height={width} infoBoxCallback={setInfoBoxValues}/>
-          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2 - width/44} height={width}/>
+          <InfoBox isVisible={infoBoxVisible} data={infoBoxData} width={width/2} height={width}/>
       </div>
     );
   }else{

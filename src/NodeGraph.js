@@ -87,37 +87,9 @@ export default function NodeGraph({
       [],[],[],[],[],[],[],[]
     ];
     
-    let rootSubs = data.nodes.filter((sub) => sub.rootDescendenceDepth > 0);
-  
-    let placed = [];
-    rootSubs.forEach((subject) => {
-      placeSubjectChains(subject, data.nodes, data.links, placed, Semesters, 0, 0)
+    data.nodes.forEach((node) => {
+      Semesters[node.semesterOrder-1].push(node);
     })
-  
-    var floatingSubjects = data.nodes.filter(sub =>  !placed.includes(sub))
-  
-    let semIndex = 0
-    floatingSubjects.forEach(element => {
-      if(Semesters[semIndex].length === 0){
-        Semesters[semIndex].push(element);
-      }else{      
-        let placed = false;
-        while(!placed){
-          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 28){
-            semIndex++;
-          }else{
-            let semLength = Semesters[semIndex].length
-            for(var i = 0; i <=semLength; i++){
-              if(!Semesters[semIndex][i]){
-                Semesters[semIndex][i] = element;
-                placed = true;
-                break;
-              }
-            }
-          }
-        }  
-      }
-    });
 
     let coords = [];
     Semesters.forEach( (sem, i) => {
@@ -132,37 +104,10 @@ export default function NodeGraph({
       [],[],[],[],[],[],[],[]
     ];
     
-    let rootSubs = data.nodes.filter((sub) => sub.rootDescendenceDepth > 0);
-  
-    let placed = [];
-    rootSubs.forEach((subject) => {
-      placeSubjectChains(subject, data.nodes, data.links, placed, Semesters, 0, 0)
+    data.nodes.forEach((node) => {
+      debugger;
+      Semesters[node.semesterOrder-1].push(node);
     })
-  
-    var floatingSubjects = data.nodes.filter(sub =>  !placed.includes(sub))
-  
-    let semIndex = 0
-    floatingSubjects.forEach(element => {
-      if(Semesters[semIndex].length === 0){
-        Semesters[semIndex].push(element);
-      }else{      
-        let placed = false;
-        while(!placed){
-          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 28){
-            semIndex++;
-          }else{
-            let semLength = Semesters[semIndex].length
-            for(var i = 0; i <=semLength; i++){
-              if(!Semesters[semIndex][i]){
-                Semesters[semIndex][i] = element;
-                placed = true;
-                break;
-              }
-            }
-          }
-        }  
-      }
-    });
 
     let coords = [];
     Semesters.forEach( (sem, i) => {

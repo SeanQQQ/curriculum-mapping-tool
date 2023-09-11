@@ -39,7 +39,6 @@ export default function NodeGraph({
     ];
     
     data.nodes.forEach((node) => {
-      debugger;
       Semesters[node.semesterOrder-1].push(node);
     })
 
@@ -51,6 +50,8 @@ export default function NodeGraph({
     setSubCoords(coords);
 
   }, [data])
+
+  console.log(data);
 
   function moveSubject(subCoord, yPos){
     let newCoords = [...subCoords];
@@ -80,7 +81,7 @@ export default function NodeGraph({
       }
       else
       {
-        if(SemCredPoints+subCoord.subject.creditPoints <= 28){
+        if(SemCredPoints+subCoord.subject.creditPoints <= data.cpPerSem){
           for(let i = 0; i<=5; i++){
             if(!takenXpos.includes(i)){
               xPos = i;
@@ -96,7 +97,7 @@ export default function NodeGraph({
           setSubCoords(newCoords);
           }
         }else{
-        alert("Maximum of 28 credit points per semester")
+        alert("Maximum of "+ data.cpPerSem + " credit points per semester")
         setSubCoords(newCoords);
         }
       }

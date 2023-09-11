@@ -27,7 +27,7 @@ function Graph( {width} ) {
     fetch('https://curriculummappingapi.azurewebsites.net/Subject?CourseId=' + courseId)
       .then((res) => res.json())
       .then((d) => {
-        setData({ nodes: d.subjects, links: d.links });
+        setData({ nodes: d.subjects, links: d.links, cpPerSem: d.cpPerSem });
       });
   }, [courseId]);
 

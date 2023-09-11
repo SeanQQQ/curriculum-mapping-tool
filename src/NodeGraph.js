@@ -36,7 +36,7 @@ function placeSubjectChains(subNode, subjects, links, placed, semesters, currSem
 
     let isPlaced = false;
     while(!isPlaced){
-      if(semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + subNode.creditPoints <= 24){
+      if(semesters[currSem].reduce((a, {creditPoints}) => a + creditPoints, 0) + subNode.creditPoints <= 28){
         if(!semesters[currSem][idealPos]){
           semesters[currSem][idealPos] = subNode;
           placed.push(subNode);
@@ -103,7 +103,7 @@ export default function NodeGraph({
       }else{      
         let placed = false;
         while(!placed){
-          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 24){
+          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 28){
             semIndex++;
           }else{
             let semLength = Semesters[semIndex].length
@@ -148,7 +148,7 @@ export default function NodeGraph({
       }else{      
         let placed = false;
         while(!placed){
-          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 24){
+          if(Semesters[semIndex].reduce((a, {creditPoints}) => a + creditPoints, 0) + element.creditPoints > 28){
             semIndex++;
           }else{
             let semLength = Semesters[semIndex].length
@@ -201,7 +201,7 @@ export default function NodeGraph({
       }
       else
       {
-        if(SemCredPoints+subCoord.subject.creditPoints <= 24){
+        if(SemCredPoints+subCoord.subject.creditPoints <= 28){
           for(let i = 0; i<=5; i++){
             if(!takenXpos.includes(i)){
               xPos = i;
@@ -217,7 +217,7 @@ export default function NodeGraph({
           setSubCoords(newCoords);
           }
         }else{
-        alert("Maximum of 24 credit points per semester")
+        alert("Maximum of 28 credit points per semester")
         setSubCoords(newCoords);
         }
       }
